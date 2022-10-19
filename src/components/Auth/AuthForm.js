@@ -1,5 +1,11 @@
 import { useState, useRef, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
+import {
+	getAuth,
+	setPersistence,
+	signInWithEmailAndPassword,
+	browserLocalPersistence,
+} from 'firebase/auth';
 
 import AuthContext from '../../store/auth-context';
 import classes from './AuthForm.module.css';
@@ -29,44 +35,71 @@ const AuthForm = () => {
 
 		setIsLoading(true);
 
-		const url = isLogin
-			? 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCpvumBfmJxEVqf8wncjmcHIqyUk-UanoU'
-			: 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCpvumBfmJxEVqf8wncjmcHIqyUk-UanoU';
+		if (isLogin) {
+			submitHandler2(enteredEmail, enteredPassword);
+		} else {
+			const url = isLogin
+				? 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCpvumBfmJxEVqf8wncjmcHIqyUk-UanoU'
+				: 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCpvumBfmJxEVqf8wncjmcHIqyUk-UanoU';
 
-		fetch(url, {
-			method: 'POST',
-			body: JSON.stringify({
-				email: enteredEmail,
-				password: enteredPassword,
-				returnSecureToken: true,
-			}),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-			.then((res) => {
-				setIsLoading(false);
-				if (res.ok) {
-					return res.json();
-				} else {
-					return res.json().then((data) => {
-						let errorMessage = 'Authentication failed!';
-						// if (data && data.error && data.error.message) {
-						// 	errorMessage = data.error.message;
-						// }
-						throw new Error(errorMessage);
-					});
-				}
+			fetch(url, {
+				method: 'POST',
+				body: JSON.stringify({
+					email: enteredEmail,
+					password: enteredPassword,
+					returnSecureToken: true,
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+				},
 			})
-			.then((data) => {
-				const expirationTime = new Date(
-					new Date().getTime() + +data.expiresIn * 1000
+				.then((res) => {
+					setIsLoading(false);
+					if (res.ok) {
+						return res.json();
+					} else {
+						return res.json().then((data) => {
+							let errorMessage = 'Authentication failed!';
+							// if (data && data.error && data.error.message) {
+							// 	errorMessage = data.error.message;
+							// }
+							throw new Error(errorMessage);
+						});
+					}
+				})
+				.then((data) => {
+					const expirationTime = new Date(
+						new Date().getTime() + +data.expiresIn * 1000
+					);
+					authCtx.login(data.idToken, expirationTime.toISOString());
+					history.replace('/');
+				})
+				.catch((err) => {
+					alert(err.message);
+				});
+		}
+	};
+
+	const submitHandler2 = (email, password) => {
+		const auth = getAuth();
+		setPersistence(auth, browserLocalPersistence)
+			.then(() => {
+				return signInWithEmailAndPassword(auth, email, password).then(
+					(userCredential) => {
+						setIsLoading(false);
+						const user = userCredential.user;
+						const expirationTime = new Date(
+							user.stsTokenManager.expirationTime
+						);
+						authCtx.login(user.accessToken, expirationTime.toISOString());
+						history.replace('/');
+					}
 				);
-				authCtx.login(data.idToken, expirationTime.toISOString());
-				history.replace('/');
 			})
-			.catch((err) => {
-				alert(err.message);
+			.catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				alert(errorCode + '\n' + errorMessage);
 			});
 	};
 
