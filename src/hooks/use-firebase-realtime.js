@@ -1,5 +1,14 @@
 import { useCallback, useState } from 'react';
-import { getDatabase, ref, set, push, onValue } from 'firebase/database';
+import {
+	getDatabase,
+	ref,
+	set,
+	push,
+	onValue,
+	onChildAdded,
+	onChildChanged,
+	onChildRemoved,
+} from 'firebase/database';
 
 import { useFirebaseAuth } from '../store/firebase-auth-context';
 
@@ -16,17 +25,17 @@ const useFirebaseRealtime = () => {
 
 			const db = getDatabase();
 			const userId = currentUser.uid;
+			const endpointRef = ref(db, requestConfig.endpoint + userId);
 
 			try {
 				if (requestConfig.method === 'push') {
-					const endpointRef = ref(db, requestConfig.endpoint + userId);
 					const newEndpointRef = push(endpointRef);
 					set(newEndpointRef, requestConfig.body ? requestConfig.body : null);
 					applyData(newEndpointRef);
 					setIsLoading(false);
 				} else if (requestConfig.method === 'readOnce') {
 					onValue(
-						ref(db, requestConfig.endpoint + userId),
+						endpointRef,
 						(snapshot) => {
 							applyData(snapshot.val());
 							setIsLoading(false);
@@ -35,6 +44,20 @@ const useFirebaseRealtime = () => {
 							onlyOnce: true,
 						}
 					);
+				} else if (requestConfig.method === 'listen') {
+					setIsLoading(false);
+
+					onChildAdded(endpointRef, (data) => {
+						applyData('add', data);
+					});
+
+					onChildChanged(endpointRef, (data) => {
+						applyData('update', data);
+					});
+
+					onChildRemoved(endpointRef, (data) => {
+						applyData('delete', data);
+					});
 				}
 			} catch (err) {
 				setError(err.message || 'Something went wrong!');

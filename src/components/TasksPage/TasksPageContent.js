@@ -8,6 +8,7 @@ const TaskPageContent = () => {
 	const [tasks, setTasks] = useState([]);
 
 	const { isLoading, error, sendRequest: fetchTasks } = useFirebaseRealtime();
+	const { sendRequest: startListening } = useFirebaseRealtime();
 
 	useEffect(() => {
 		const transformTasks = (tasksObj) => {
@@ -19,6 +20,17 @@ const TaskPageContent = () => {
 
 			setTasks(loadedTasks);
 		};
+		const applyChanges = (action, task) => {
+			if (action === 'add') {
+				taskAddHandler({ id: task.key, text: task.val().text });
+			}
+			if (action === 'update') {
+				taskUpdateHandler({ id: task.key, text: task.val().text });
+			}
+			if (action === 'delete') {
+				taskDeleteHandler(task.key);
+			}
+		};
 
 		fetchTasks(
 			{
@@ -27,10 +39,31 @@ const TaskPageContent = () => {
 			},
 			transformTasks
 		);
-	}, [fetchTasks]);
+		startListening(
+			{
+				endpoint: 'userTasks/',
+				method: 'listen',
+			},
+			applyChanges
+		);
+	}, [fetchTasks, startListening]);
 
 	const taskAddHandler = (task) => {
-		setTasks((prevTasks) => prevTasks.concat(task));
+		setTasks((prevTasks) =>
+			!prevTasks.find((t) => t.id !== task.id)
+				? prevTasks.concat(task)
+				: console.log('eklemedim')
+		);
+	};
+
+	const taskUpdateHandler = (task) => {
+		setTasks((prevTasks) =>
+			prevTasks.map((t) => (t.id === task.id ? { ...t, text: task.text } : t))
+		);
+	};
+
+	const taskDeleteHandler = (taskId) => {
+		setTasks((prevTasks) => prevTasks.filter((t) => t.id !== taskId));
 	};
 
 	return (
