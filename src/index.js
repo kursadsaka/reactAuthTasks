@@ -3,13 +3,13 @@ import { BrowserRouter } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
-import { AuthContextProvider } from './store/auth-context';
+import { FirebaseAuthProvider } from './store/firebase-auth-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-	<AuthContextProvider>
+	<FirebaseAuthProvider>
 		<BrowserRouter>
 			<App />
 		</BrowserRouter>
-	</AuthContextProvider>
+	</FirebaseAuthProvider>
 );

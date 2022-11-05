@@ -1,14 +1,15 @@
-import { useContext } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Layout from './components/Layout/Layout';
 import UserProfile from './components/Profile/UserProfile';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
-import AuthContext from './store/auth-context';
+import { useFirebaseAuth } from './store/firebase-auth-context';
 
 function App() {
-	const authCtx = useContext(AuthContext);
+	const { currentUser } = useFirebaseAuth();
+
+	const isUserLoggedIn = currentUser ? true : false;
 
 	return (
 		<Layout>
@@ -16,12 +17,12 @@ function App() {
 				<Route path='/' exact>
 					<HomePage />
 				</Route>
-				{!authCtx.isUserLoggedIn && (
+				{!isUserLoggedIn && (
 					<Route path='/auth'>
 						<AuthPage />
 					</Route>
 				)}
-				{authCtx.isUserLoggedIn && (
+				{isUserLoggedIn && (
 					<Route path='/profile'>
 						<UserProfile />
 					</Route>

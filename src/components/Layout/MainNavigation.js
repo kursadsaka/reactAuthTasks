@@ -1,16 +1,19 @@
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import AuthContext from '../../store/auth-context';
+import { useFirebaseAuth } from '../../store/firebase-auth-context';
 import classes from './MainNavigation.module.css';
 
 const MainNavigation = () => {
-	const authCtx = useContext(AuthContext);
+	const { logout, currentUser } = useFirebaseAuth();
 
-	const isUserLoggedIn = authCtx.isUserLoggedIn;
+	const isUserLoggedIn = currentUser ? true : false;
 
 	const logoutHandler = () => {
-		authCtx.logout();
+		logout()
+			.then(() => {})
+			.catch((err) => {
+				alert(err.message);
+			});
 	};
 
 	return (

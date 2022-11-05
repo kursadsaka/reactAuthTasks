@@ -1,11 +1,13 @@
-import { useRef, useContext } from 'react';
+import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import AuthContext from '../../store/auth-context';
+import { useFirebaseAuth } from '../../store/firebase-auth-context';
 import classes from './ProfileForm.module.css';
 
 const ProfileForm = () => {
-	const authCtx = useContext(AuthContext);
+	const { currentUser, updateUserPassword } = useFirebaseAuth();
+
+	const [isLoading, setIsLoading] = useState(false);
 
 	const history = useHistory();
 
@@ -18,24 +20,16 @@ const ProfileForm = () => {
 
 		// add validation;
 
-		fetch(
-			'https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCpvumBfmJxEVqf8wncjmcHIqyUk-UanoU',
-			{
-				method: 'POST',
-				body: JSON.stringify({
-					idToken: authCtx.token,
-					password: enteredNewPassword,
-					returnSecureToken: true,
-				}),
-				headers: {
-					'Content-Type': 'applicatiob/json',
-				},
-			}
-		).then((res) => {
-			// assumption: Always succeeds!
-
-			history.replace('/');
-		});
+		updateUserPassword(currentUser, enteredNewPassword)
+			.then(() => {
+				history.replace('/');
+			})
+			.catch((err) => {
+				alert(err.message);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	return (
@@ -50,7 +44,8 @@ const ProfileForm = () => {
 				/>
 			</div>
 			<div className={classes.action}>
-				<button>Change Password</button>
+				{!isLoading && <button>Change Password</button>}
+				{isLoading && <p>Sending request...</p>}
 			</div>
 		</form>
 	);
