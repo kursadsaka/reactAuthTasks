@@ -23,10 +23,14 @@ const useFirebaseRealtime = () => {
 					const newEndpointRef = push(endpointRef);
 					set(newEndpointRef, requestConfig.body ? requestConfig.body : null);
 					applyData(newEndpointRef);
+					setIsLoading(false);
 				} else if (requestConfig.method === 'readOnce') {
 					onValue(
 						ref(db, requestConfig.endpoint + userId),
-						(snapshot) => applyData(snapshot.val()),
+						(snapshot) => {
+							applyData(snapshot.val());
+							setIsLoading(false);
+						},
 						{
 							onlyOnce: true,
 						}
@@ -34,9 +38,8 @@ const useFirebaseRealtime = () => {
 				}
 			} catch (err) {
 				setError(err.message || 'Something went wrong!');
+				setIsLoading(false);
 			}
-			await new Promise((r) => setTimeout(r, 500));
-			setIsLoading(false);
 		},
 		[currentUser.uid]
 	);
