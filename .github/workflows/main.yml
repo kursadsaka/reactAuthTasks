@@ -24,5 +24,7 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
         uses: oleksiyrudenko/gha-git-credentials@v2-latest
-      - run: npm install
-      - run: npm run deploy
+      # - run: npm install
+      # - run: npm run deploy
+      - name: Doploy to GitHub Pages
+        uses: amitsingh-007/deploy-to-github-pages@v1.1
