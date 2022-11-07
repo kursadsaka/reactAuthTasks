@@ -26,5 +26,13 @@ jobs:
         uses: oleksiyrudenko/gha-git-credentials@v2-latest
       # - run: npm install
       # - run: npm run deploy
-      - name: Doploy to GitHub Pages
-        uses: amitsingh-007/deploy-to-github-pages@v1.1
+      - run: npm ci
+        shell: bash
+      - run: CI=false npm run build
+        shell: bash
+      - run: git --work-tree build add --all
+        shell: bash
+      - run: git --work-tree build commit -m 'deploy files'
+        shell: bash
+      - run: git push origin HEAD:gh-pages --force
+        shell: bash
