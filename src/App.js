@@ -14,21 +14,21 @@ function App() {
 	return (
 		<Layout>
 			<Switch>
-				<Route path='/' exact>
+				<Route path='/reactAuthTasks/' exact>
 					<HomePage />
 				</Route>
 				{!isUserLoggedIn && (
-					<Route path='/auth'>
+					<Route path='/reactAuthTasks/auth'>
 						<AuthPage />
 					</Route>
 				)}
 				{isUserLoggedIn && (
-					<Route path='/profile'>
+					<Route path='/reactAuthTasks/profile'>
 						<UserProfile />
 					</Route>
 				)}
 				<Route path='*'>
-					<Redirect to='/' />
+					<Redirect to='/reactAuthTasks/' />
 				</Route>
 			</Switch>
 		</Layout>

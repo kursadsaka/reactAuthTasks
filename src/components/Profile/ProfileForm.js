@@ -22,7 +22,7 @@ const ProfileForm = () => {
 
 		updateUserPassword(currentUser, enteredNewPassword)
 			.then(() => {
-				history.replace('/');
+				history.replace('/reactAuthTasks/');
 			})
 			.catch((err) => {
 				alert(err.message);

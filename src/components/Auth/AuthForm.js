@@ -33,7 +33,7 @@ const AuthForm = () => {
 
 		funcToUse(enteredEmail, enteredPassword)
 			.then(() => {
-				history.replace('/');
+				history.replace('/reactAuthTasks/');
 			})
 			.catch((err) => {
 				alert(err.message);

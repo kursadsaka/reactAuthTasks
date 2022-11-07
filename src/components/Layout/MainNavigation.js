@@ -18,19 +18,19 @@ const MainNavigation = () => {
 
 	return (
 		<header className={classes.header}>
-			<Link to='/'>
+			<Link to='/reactAuthTasks/'>
 				<div className={classes.logo}>React Auth</div>
 			</Link>
 			<nav>
 				<ul>
 					{!isUserLoggedIn && (
 						<li>
-							<Link to='/auth'>Login</Link>
+							<Link to='/reactAuthTasks/auth'>Login</Link>
 						</li>
 					)}
 					{isUserLoggedIn && (
 						<li>
-							<Link to='/profile'>Profile</Link>
+							<Link to='/reactAuthTasks/profile'>Profile</Link>
 						</li>
 					)}
 					{isUserLoggedIn && (
