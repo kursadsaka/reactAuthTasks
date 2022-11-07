@@ -20,5 +20,9 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Authorizing Github action
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+        uses: oleksiyrudenko/gha-git-credentials@v2-latest
       - run: npm install
       - run: npm run deploy
