@@ -50,9 +50,9 @@ const TaskPageContent = () => {
 
 	const taskAddHandler = (task) => {
 		setTasks((prevTasks) =>
-			!prevTasks.find((t) => t.id !== task.id)
+			!prevTasks.find((t) => t.id === task.id)
 				? prevTasks.concat(task)
-				: console.log('eklemedim')
+				: prevTasks
 		);
 	};
 
@@ -68,7 +68,7 @@ const TaskPageContent = () => {
 
 	return (
 		<>
-			<NewTask onAddTask={taskAddHandler} />
+			<NewTask onAddTask={() => {}} />
 			<Tasks
 				items={tasks}
 				loading={isLoading}
