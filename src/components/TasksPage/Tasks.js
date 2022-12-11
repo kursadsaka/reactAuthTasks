@@ -9,7 +9,12 @@ const Tasks = (props) => {
 		taskList = (
 			<ul>
 				{props.items.map((task) => (
-					<TaskItem id={task.id} key={task.id}>
+					<TaskItem
+						id={task.id}
+						key={task.id}
+						isCompleted={task.isCompleted}
+						taskText={task.text}
+					>
 						{task.text}
 					</TaskItem>
 				))}

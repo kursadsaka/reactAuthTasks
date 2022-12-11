@@ -15,7 +15,12 @@ const TaskPageContent = () => {
 			const loadedTasks = [];
 
 			for (const taskKey in tasksObj) {
-				loadedTasks.push({ id: taskKey, text: tasksObj[taskKey].text });
+				const isCompleted = tasksObj[taskKey].isCompleted;
+				loadedTasks.push({
+					id: taskKey,
+					text: tasksObj[taskKey].text,
+					isCompleted: isCompleted ? isCompleted : false,
+				});
 			}
 
 			setTasks(loadedTasks);
@@ -25,7 +30,11 @@ const TaskPageContent = () => {
 				taskAddHandler({ id: task.key, text: task.val().text });
 			}
 			if (action === 'update') {
-				taskUpdateHandler({ id: task.key, text: task.val().text });
+				taskUpdateHandler({
+					id: task.key,
+					text: task.val().text,
+					isCompleted: task.val().isCompleted,
+				});
 			}
 			if (action === 'delete') {
 				taskDeleteHandler(task.key);
@@ -58,7 +67,11 @@ const TaskPageContent = () => {
 
 	const taskUpdateHandler = (task) => {
 		setTasks((prevTasks) =>
-			prevTasks.map((t) => (t.id === task.id ? { ...t, text: task.text } : t))
+			prevTasks.map((t) =>
+				t.id === task.id
+					? { ...t, text: task.text, isCompleted: task.isCompleted }
+					: t
+			)
 		);
 	};
 

@@ -10,6 +10,12 @@ const TaskItem = (props) => {
 		sendRequest: sendDeleteTaskRequest,
 	} = useFirebaseRealtime();
 
+	const {
+		isLoadingCheck,
+		errorCheck,
+		sendRequest: sendCheckTaskRequest,
+	} = useFirebaseRealtime();
+
 	const deleteTaskHandler = (key) => {
 		sendDeleteTaskRequest({
 			endpoint: 'userTasks/',
@@ -18,10 +24,31 @@ const TaskItem = (props) => {
 		});
 	};
 
+	const checkboxHandler = (isCompleted, key) => {
+		sendCheckTaskRequest({
+			endpoint: 'userTasks/',
+			method: 'update',
+			body: { text: props.taskText, isCompleted: isCompleted },
+			key,
+		});
+	};
+
 	return (
 		<li className={classes.task}>
 			{error && <p>{error}</p>}
-			{props.children}
+			{errorCheck && <p>{errorCheck}</p>}
+			<div>
+				<input
+					type='checkbox'
+					checked={props.isCompleted}
+					onChange={(event) => {
+						checkboxHandler(event.target.checked, props.id);
+					}}
+					disabled={isLoadingCheck}
+				></input>
+				{props.isCompleted && <s>{props.children}</s>}
+				{!props.isCompleted && props.children}
+			</div>
 			<Button
 				onClick={() => {
 					deleteTaskHandler(props.id);

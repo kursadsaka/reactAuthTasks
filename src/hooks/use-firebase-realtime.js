@@ -34,6 +34,12 @@ const useFirebaseRealtime = () => {
 					set(newEndpointRef, requestConfig.body ? requestConfig.body : null);
 					applyData(newEndpointRef);
 					setIsLoading(false);
+				} else if (requestConfig.method === 'update') {
+					set(
+						ref(db, requestConfig.endpoint + userId + '/' + requestConfig.key),
+						requestConfig.body ? requestConfig.body : null
+					);
+					setIsLoading(false);
 				} else if (requestConfig.method === 'remove') {
 					await remove(
 						ref(db, requestConfig.endpoint + userId + '/' + requestConfig.key)
