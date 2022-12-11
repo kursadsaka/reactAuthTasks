@@ -8,6 +8,7 @@ import {
 	onChildAdded,
 	onChildChanged,
 	onChildRemoved,
+	remove,
 } from 'firebase/database';
 
 import { useFirebaseAuth } from '../store/firebase-auth-context';
@@ -32,6 +33,11 @@ const useFirebaseRealtime = () => {
 					const newEndpointRef = push(endpointRef);
 					set(newEndpointRef, requestConfig.body ? requestConfig.body : null);
 					applyData(newEndpointRef);
+					setIsLoading(false);
+				} else if (requestConfig.method === 'remove') {
+					await remove(
+						ref(db, requestConfig.endpoint + userId + '/' + requestConfig.key)
+					);
 					setIsLoading(false);
 				} else if (requestConfig.method === 'readOnce') {
 					onValue(

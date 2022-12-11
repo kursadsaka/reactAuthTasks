@@ -9,7 +9,9 @@ const Tasks = (props) => {
 		taskList = (
 			<ul>
 				{props.items.map((task) => (
-					<TaskItem key={task.id}>{task.text}</TaskItem>
+					<TaskItem id={task.id} key={task.id}>
+						{task.text}
+					</TaskItem>
 				))}
 			</ul>
 		);
