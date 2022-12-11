@@ -56,6 +56,10 @@ export const FirebaseAuthProvider = (props) => {
 		updateUserPassword,
 	};
 
+	if (isLoading) {
+		console.log(isLoading);
+	}
+
 	return (
 		<FirebaseAuthContext.Provider value={contextValue}>
 			{/* {!isLoading && props.children} */}
