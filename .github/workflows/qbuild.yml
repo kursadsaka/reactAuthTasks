@@ -1,7 +1,7 @@
 name: Deploy React App to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the default branchh
   push:
     branches: ["main"]
 
