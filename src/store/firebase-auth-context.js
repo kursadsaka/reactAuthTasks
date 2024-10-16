@@ -76,6 +76,10 @@ export const FirebaseAuthProvider = (props) => {
     isDemoUser,
   };
 
+  if (isLoading) {
+    console.log(isLoading);
+  }
+
   return (
     <FirebaseAuthContext.Provider value={contextValue}>
       {/* {!isLoading && props.children} */}
