@@ -1,69 +1,85 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { firebaseAuth } from '../Firebase';
 import {
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
-	signOut,
-	updatePassword,
-} from 'firebase/auth';
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
+} from "firebase/auth";
+import React, { useContext, useEffect, useState } from "react";
+import { firebaseAuth } from "../Firebase";
 
 const FirebaseAuthContext = React.createContext({
-	currentUser: undefined,
-	signup: (email, password) => {},
-	login: (email, password) => {},
-	logout: () => {},
-	updateUserPassword: (user, password) => {},
+  currentUser: undefined,
+  signup: (email, password) => {},
+  login: (email, password) => {},
+  logout: () => {},
+  updateUserPassword: (user, password) => {},
+  loginAsDemo: () => {},
+  isDemoUser: () => {},
 });
 
 export const useFirebaseAuth = () => {
-	return useContext(FirebaseAuthContext);
+  return useContext(FirebaseAuthContext);
 };
 
 export const FirebaseAuthProvider = (props) => {
-	const [currentUser, setCurrentUser] = useState();
-	const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
-	const signup = (email, password) => {
-		return createUserWithEmailAndPassword(firebaseAuth, email, password);
-	};
+  const DEMO_EMAIL = "demo@kursad.me";
 
-	const login = (email, password) => {
-		return signInWithEmailAndPassword(firebaseAuth, email, password);
-	};
+  const signup = (email, password) => {
+    return createUserWithEmailAndPassword(firebaseAuth, email, password);
+  };
 
-	const logout = () => {
-		return signOut(firebaseAuth);
-	};
+  const login = (email, password) => {
+    return signInWithEmailAndPassword(firebaseAuth, email, password);
+  };
 
-	const updateUserPassword = (user, password) => {
-		return updatePassword(user, password);
-	};
+  const logout = () => {
+    return signOut(firebaseAuth);
+  };
 
-	useEffect(() => {
-		const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
-			setCurrentUser(user);
-			setIsLoading(false);
-		});
+  const updateUserPassword = (user, password) => {
+    if (user.email === DEMO_EMAIL) {
+      return Promise.reject(
+        new Error("Cannot change password for demo account")
+      );
+    }
+    return updatePassword(user, password);
+  };
 
-		return unsubscribe;
-	}, []);
+  const loginAsDemo = () => {
+    const demoPassword = "demopassword123";
+    return login(DEMO_EMAIL, demoPassword);
+  };
 
-	const contextValue = {
-		currentUser,
-		signup,
-		login,
-		logout,
-		updateUserPassword,
-	};
+  const isDemoUser = () => {
+    return currentUser?.email === DEMO_EMAIL;
+  };
 
-	if (isLoading) {
-		console.log(isLoading);
-	}
+  useEffect(() => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      setIsLoading(false);
+    });
 
-	return (
-		<FirebaseAuthContext.Provider value={contextValue}>
-			{/* {!isLoading && props.children} */}
-			{props.children}
-		</FirebaseAuthContext.Provider>
-	);
+    return unsubscribe;
+  }, []);
+
+  const contextValue = {
+    currentUser,
+    signup,
+    login,
+    logout,
+    updateUserPassword,
+    loginAsDemo,
+    isDemoUser,
+  };
+
+  return (
+    <FirebaseAuthContext.Provider value={contextValue}>
+      {/* {!isLoading && props.children} */}
+      {props.children}
+    </FirebaseAuthContext.Provider>
+  );
 };

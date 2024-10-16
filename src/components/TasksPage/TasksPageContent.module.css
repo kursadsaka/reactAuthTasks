@@ -1,0 +1,40 @@
+.tasksPage {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tasksHeader {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.tasksList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.taskItem {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskText {
+  font-size: 1.1rem;
+  color: #34495e;
+}
+
+.taskActions {
+  display: flex;
+  gap: 0.5rem;
+}

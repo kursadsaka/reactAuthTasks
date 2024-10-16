@@ -8,3 +8,36 @@
   padding: 0;
   text-align: left;
 }
+
+.emptyMessage {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-top: 2rem;
+}
+
+.errorMessage {
+  color: #dc3545;
+  margin-top: 1rem;
+}
+
+.retryButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  margin-top: 1rem;
+}
+
+.retryButton:hover,
+.retryButton:focus {
+  background-color: #218838;
+}
+
+.loadingMessage {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-top: 2rem;
+}
